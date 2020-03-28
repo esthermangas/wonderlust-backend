@@ -6,7 +6,7 @@ const PlaceSchema = new mongoose.Schema({
         max: 250,
         required: true
     },
-    guest: {
+    guests: {
         type: Number,
         required: true
     },
@@ -19,11 +19,24 @@ const PlaceSchema = new mongoose.Schema({
         required: true
     },
     user_id: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    bookings: [{type: mongoose.Schema.ObjectId, ref:'Booking'}]
 });
+
+PlaceSchema.methods.checkBooked = function(startDate, endDate) {
+    let reserved = false;
+    this.bookings.forEach( booking => {
+        if(!(startDate < booking.startDate && endDate < booking.startDate)){
+            reserved=true;
+        }else if(!(startDate > booking.endDate)) {
+            reserved=true;
+        }
+    });
+    return reserved;
+};
 
 mongoose.set('useFindAndModify', false);
 module.exports = mongoose.model('Place', PlaceSchema);
