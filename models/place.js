@@ -14,8 +14,8 @@ const PlaceSchema = new mongoose.Schema({
         type: Array,
         required: false
     },
-    location: {
-        type: Object,
+    city: {
+        type: String,
         required: true
     },
     user_id: {
@@ -29,9 +29,9 @@ const PlaceSchema = new mongoose.Schema({
 PlaceSchema.methods.checkBooked = function(startDate, endDate) {
     let reserved = false;
     this.bookings.forEach( booking => {
-        if(!(startDate < booking.startDate && endDate < booking.startDate)){
-            reserved=true;
-        }else if(!(startDate > booking.endDate)) {
+        if(  !(booking.startDate > Date.parse(startDate) && booking.startDate > Date.parse(endDate) ) &&
+             !(booking.endDate < Date.parse(startDate) && booking.endDate < Date.parse(endDate) )
+        ){
             reserved=true;
         }
     });
